@@ -4,6 +4,10 @@ ARG VARIANT
 FROM mcr.microsoft.com/vscode/devcontainers/base:0-${VARIANT}
 
 ARG VARIANT
+ARG DOTNET_VERSION=3.1
+ARG NODE_VERSION=12
+ARG TERRAFORM_VERSION=0.13.4
+
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 RUN apt-get update \
@@ -15,22 +19,32 @@ RUN apt-get update \
   && chsh -s $(which zsh) \
   \
   # Add dotnet repo
-  && wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
+  && wget https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
   && dpkg -i packages-microsoft-prod.deb \
   \
-  # Add Node 14 repo
+  # Add azure repo
+  && curl -sL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/microsoft.gpg > /dev/null \
+  && echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/azure-cli.list \
+  \
+  # Add node 14 repo
   && curl -sSL https://deb.nodesource.com/gpgkey/nodesource.gpg.key | sudo apt-key add - \
-  && echo "deb https://deb.nodesource.com/node_14.x ${VARIANT} main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
-  && echo "deb-src https://deb.nodesource.com/node_14.x ${VARIANT} main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list \
+  && echo "deb https://deb.nodesource.com/node_${NODE_VERSION}.x $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/nodesource.list \
+  && echo "deb-src https://deb.nodesource.com/node_${NODE_VERSION}.x $(lsb_release -cs) main" | sudo tee -a /etc/apt/sources.list.d/nodesource.list \
   \
   # Add yarn repo
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
   \
+  # Install terraform
+  && curl -O -sSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+  && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+  && mv terraform /usr/bin \
+  && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
+  \
   && apt-get update \
-  && apt install -y build-essential golang-go dotnet-sdk-3.1 dotnet-runtime-3.1 aspnetcore-runtime-3.1 powershell nodejs yarn \
+  && apt install -y build-essential golang-go dotnet-sdk-${DOTNET_VERSION} dotnet-runtime-${DOTNET_VERSION} aspnetcore-runtime-${DOTNET_VERSION} powershell nodejs yarn azure-cli \
   \
   # Install npm dependencies
   && yarn global add @angular/cli \
