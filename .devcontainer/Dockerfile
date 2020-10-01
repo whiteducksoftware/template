@@ -13,7 +13,7 @@ RUN apt-get update \
   && add-apt-repository universe \
   \
   # Change default shell to zsh
-  #&& chsh -s $(which zsh) \
+  && chsh -s $(which zsh) \
   \
   # Add dotnet repo
   && wget https://packages.microsoft.com/config/ubuntu/18.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb \
