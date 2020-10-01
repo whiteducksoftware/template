@@ -5,8 +5,7 @@
 	"build": {
 		"dockerfile": "Dockerfile",
 		// Update 'VARIANT' to pick an Ubuntu version: focal, bionic
-		// Node versions: https://github.com/nodesource/distributions/blob/master/README.md
-		"args": { "VARIANT": "bionic", "NODE_VERSION": "14.x" }
+		"args": { "VARIANT": "bionic" }
 	},
 
 	// Set *default* container specific settings.json values on container create.
