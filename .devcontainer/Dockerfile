@@ -37,6 +37,10 @@ RUN apt-get update \
   && curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
   && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
   \
+  # Add docker repo
+  && curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - \
+  && add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" \
+  \
   # Install terraform
   && curl -O -sSL https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
   && unzip terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
@@ -44,7 +48,13 @@ RUN apt-get update \
   && rm terraform_${TERRAFORM_VERSION}_linux_amd64.zip \
   \
   && apt-get update \
-  && apt install -y build-essential golang-go dotnet-sdk-${DOTNET_VERSION} dotnet-runtime-${DOTNET_VERSION} aspnetcore-runtime-${DOTNET_VERSION} powershell nodejs yarn azure-cli \
+  && apt install -y build-essential \
+    golang-go \
+    dotnet-sdk-${DOTNET_VERSION} dotnet-runtime-${DOTNET_VERSION} aspnetcore-runtime-${DOTNET_VERSION} \
+    powershell \
+    nodejs yarn \
+    azure-cli \
+    docker-ce-cli \
   \
   # Install npm dependencies
   && yarn global add @angular/cli \

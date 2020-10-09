@@ -23,5 +23,10 @@
 	"postCreateCommand": "yarn install --no-optional",
 
 	// Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
-	// "remoteUser": "vscode"
+	//"remoteUser": "vscode",
+	
+	// Mounts
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	]
 }
